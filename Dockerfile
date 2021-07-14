@@ -3,18 +3,20 @@ FROM node:12
 # Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
+EXPOSE 5000
+RUN npm install -g serve
+
 COPY package*.json ./
 
+RUN npx browserslist@latest --update-db
 RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
 
 # Bundle app source
 COPY src src
 COPY public public
 
-EXPOSE 3000
-CMD [ "npm", "start"]
+ENV NODE_ENV=production
+
+RUN npm run build
+
+CMD [ "serve", "-s", "build" ]
